@@ -1,8 +1,16 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import time
+import os
+import urllib.request
+import pyautogui
 
-url = "https://search.naver.com/search.naver?where=image&sm=tab_jum&query=%EB%B8%94%EB%9E%99%ED%95%91%ED%81%AC+%EC%A0%9C%EB%8B%88"
+keyword = pyautogui.prompt("검색어를 입력하세요.")
+
+if not os.path.exists(f"{keyword}"):
+    os.mkdir(f"{keyword}")
+
+url = f"https://search.naver.com/search.naver?where=image&sm=tab_jum&query={keyword}"
 browser = webdriver.Chrome("/Users/jade/Desktop/web_crawling/driver/chromedriver")
 browser.implicitly_wait(10)
 browser.maximize_window()
@@ -37,3 +45,4 @@ for i, img in enumerate(imgs, 1):
     # 각 이미지 태그의 주소
     img_src = img.get_attribute("src")
     print(i, img_src)
+    urllib.request.urlretrieve(img_src, f'{keyword}/{i}.png')
