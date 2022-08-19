@@ -17,6 +17,17 @@ time.sleep(1)
 search.send_keys(Keys.ENTER)
 time.sleep(2)
 
+
+# iframe 안으로 들어가기
+browser.switch_to.frame("searchIframe")
+
+# iframe 밖으로 나오기
+# browser.switch_to_default_content()
+
+
+
 # 가게 이름 10개 가져오기
 names = browser.find_elements_by_css_selector("span.OXiLu")
-print(names)
+
+for name in names:
+    print(name.text)
