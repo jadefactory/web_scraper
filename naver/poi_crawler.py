@@ -31,3 +31,33 @@ names = browser.find_elements_by_css_selector("span.OXiLu")
 
 for name in names:
     print(name.text)
+
+# iframe 안쪽을 클릭하기
+browser.find_element_by_css_selector("#_pcmap_list_scroll_container").click()
+
+# 로딩된 데이터 개수 확인
+lis = browser.find_elements_by_css_selector("li._1EKsQ")
+before_len = len(lis)
+
+print("스크롤 전", before_len, "")
+
+n = 1
+while True:
+
+    # 맨 아래로 스크롤을 내린다.
+    browser.find_element_by_css_selector("body").send_keys(Keys.END)
+
+    # 스크롤 사이 페이지 로딩 시간
+    time.sleep(1.5)
+
+    # 스크롤 후 로딩된 데이터 개수 확인
+    lis = browser.find_elements_by_css_selector("li._1EKsQ")
+    after_len = len(lis)
+
+    print(f"{n}회 스크롤 후", after_len, "")
+
+    # 로딩된 데이터 개수가 같다면 반복 멈춤
+    if before_len == after_len:
+        break
+    before_len = after_len
+    n += 1
