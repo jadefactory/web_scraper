@@ -1,6 +1,14 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import time
+import pyautogui
+import openpyxl
+
+keyword = pyautogui.prompt("검색어를 입력하세요")
+
+wb = openpyxl.Workbook()
+ws = wb.create_sheet(keyword)
+ws.append(["순위", "이름", "별점", "방문자리뷰", "블로그리뷰"])
 
 url = "https://map.naver.com/v5/"
 browser = webdriver.Chrome("/Users/jade/Desktop/portfolio/_web_crawling/driver/chromedriver")
@@ -13,7 +21,7 @@ browser.maximize_window()
 search = browser.find_element_by_css_selector("input.input_search")
 search.click()
 time.sleep(1)
-search.send_keys("강남역맛집")
+search.send_keys(keyword)
 time.sleep(1)
 search.send_keys(Keys.ENTER)
 time.sleep(2)
@@ -24,14 +32,6 @@ browser.switch_to.frame("searchIframe")
 
 # iframe 밖으로 나오기
 # browser.switch_to_default_content()
-
-
-
-# 가게 이름 10개 가져오기
-names = browser.find_elements_by_css_selector("span.OXiLu")
-
-for name in names:
-    print(name.text)
 
 # iframe 안쪽을 클릭하기
 browser.find_element_by_css_selector("#_pcmap_list_scroll_container").click()
@@ -66,7 +66,7 @@ while True:
 # 데이터 기다리는 시간을 0으로 만들기(데이터가 없더라도 빠르게 넘어감)
 browser.implicitly_wait(0)
 
-
+rank = 1
 for li in lis:
     # 광고 상품 아닌 것만
     if len(li.find_elements_by_css_selector("svg._2ulu3")) == 0:
@@ -108,5 +108,12 @@ for li in lis:
                 except:
                     blog_review = "0"
 
+            # 데이터 전처리
+            visit_review = visit_review.replace("방문자리뷰 ", "").replace(",","")
+            blog_review = blog_review.replace("블로그리뷰 ", "").replace(",","")
 
-            print(name, star, visit_review, blog_review)
+            print(rank, name, star, visit_review, blog_review)
+            ws.append([rank, name, float(star), int(visit_review), int(blog_review)])
+            rank += 1
+
+wb.save(f"{keyword}.xlsx")
