@@ -4,9 +4,10 @@ import time
 
 url = "https://map.naver.com/v5/"
 browser = webdriver.Chrome("/Users/jade/Desktop/portfolio/_web_crawling/driver/chromedriver")
+browser.get(url)
 browser.implicitly_wait(10)
 browser.maximize_window()
-browser.get(url)
+
 
 # 검색창 입력
 search = browser.find_element_by_css_selector("input.input_search")
@@ -61,3 +62,51 @@ while True:
         break
     before_len = after_len
     n += 1
+
+# 데이터 기다리는 시간을 0으로 만들기(데이터가 없더라도 빠르게 넘어감)
+browser.implicitly_wait(0)
+
+
+for li in lis:
+    # 광고 상품 아닌 것만
+    if len(li.find_elements_by_css_selector("svg._2ulu3")) == 0:
+
+        # 별점이 있는 것만
+        if len(li.find_elements_by_css_selector("span._2FqTn._1mRAM > em")) > 0:
+            
+            # 가게명
+            name = li.find_element_by_css_selector("span.place_bluelink.OXiLu").text
+
+            # 별점
+            star = li.find_element_by_css_selector("span._2FqTn._1mRAM > em").text
+
+            # 영업 시간이 있다면
+            if len(li.find_elements_by_css_selector("span._2FqTn._4DbfT")) > 0:
+                # 방문자 리뷰수
+                try:
+                    visit_review = li.find_element_by_css_selector("span._2FqTn:nth-child(3)").text
+                except:
+                    visit_review = "0"
+
+                # 블로그 리뷰수
+                try:
+                    blog_review = li.find_element_by_css_selector("span._2FqTn:nth-child(4)").text
+                except:
+                    blog_review = "0"
+            
+            # 영업 시간이 없다면
+            else:
+                # 방문자 리뷰수
+                try:
+                    visit_review = li.find_element_by_css_selector("span._2FqTn:nth-child(2)").text
+                except:
+                    visit_review = "0"
+
+                # 블로그 리뷰수
+                try:
+                    blog_review = li.find_element_by_css_selector("span._2FqTn:nth-child(3)").text
+                except:
+                    blog_review = "0"
+
+
+            print(name, star, visit_review, blog_review)
